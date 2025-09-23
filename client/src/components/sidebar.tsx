@@ -16,8 +16,9 @@ export default function Sidebar() {
     queryKey: ["/api/claims"],
   });
 
-  // Filter active claims (pending_review status)
+  // Filter claims by status
   const activeClaims = claims.filter(claim => claim.status === "pending_review");
+  const approvedClaims = claims.filter(claim => claim.status === "approved");
   
   const handleClaimClick = (claimNumber: string) => {
     setLocation(`/claims/${claimNumber}`);
@@ -101,37 +102,54 @@ export default function Sidebar() {
               </div>
             </AccordionContent>
           </AccordionItem>
+          
+          <AccordionItem value="approved-claims" className="border-0">
+            <AccordionTrigger className="p-0 hover:no-underline">
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                data-testid="nav-approved"
+              >
+                <CheckCircle2 className="w-5 h-5 mr-3" />
+                <span>Approved</span>
+                <Badge className="ml-auto bg-green-500 text-white mr-2">{approvedClaims.length}</Badge>
+              </Button>
+            </AccordionTrigger>
+            <AccordionContent className="pt-2 pb-0">
+              <div className="space-y-1 ml-8">
+                {approvedClaims.map((claim) => {
+                  const isActive = location.includes(claim.claimNumber);
+                  
+                  return (
+                    <Button
+                      key={claim.id}
+                      variant={isActive ? "secondary" : "ghost"}
+                      size="sm"
+                      className={`w-full justify-start text-left h-auto py-2 ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
+                      onClick={() => handleClaimClick(claim.claimNumber)}
+                      data-testid={`claim-${claim.claimNumber}`}
+                    >
+                      <div className="flex flex-col items-start w-full">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-medium text-xs">{claim.claimNumber}</span>
+                          <Badge variant="outline" className="text-xs h-4 text-green-600 border-green-200">
+                            APPROVED
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground truncate w-full">
+                          {claim.policyholderName}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          ${parseInt(claim.totalEstimate || "0").toLocaleString()}
+                        </div>
+                      </div>
+                    </Button>
+                  );
+                })}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
-        
-        <div className="mt-4 space-y-2">
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            data-testid="nav-approved"
-          >
-            <CheckCircle2 className="w-5 h-5 mr-3" />
-            <span>Approved</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            data-testid="nav-pending"
-          >
-            <Clock className="w-5 h-5 mr-3" />
-            <span>Pending Review</span>
-            <Badge className="ml-auto bg-amber-500 text-white">{activeClaims.length}</Badge>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            data-testid="nav-analytics"
-          >
-            <BarChart3 className="w-5 h-5 mr-3" />
-            <span>Analytics</span>
-          </Button>
-        </div>
       </nav>
       
       {/* User Info */}

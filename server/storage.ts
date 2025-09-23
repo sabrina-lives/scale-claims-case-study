@@ -69,6 +69,14 @@ export class MemStorage implements IStorage {
     const claim2Id = randomUUID();
     const claim3Id = randomUUID();
     const claim4Id = randomUUID();
+    const claim5Id = randomUUID();
+    const claim6Id = randomUUID();
+    const claim7Id = randomUUID();
+    const claim8Id = randomUUID();
+    // Approved claims
+    const approvedClaim1Id = randomUUID();
+    const approvedClaim2Id = randomUUID();
+    const approvedClaim3Id = randomUUID();
     
     // Sample claims
     const sampleClaim: Claim = {
@@ -135,10 +143,130 @@ export class MemStorage implements IStorage {
       assignedAgent: "Sarah Johnson",
     };
     
+    const claim5: Claim = {
+      id: claim5Id,
+      claimNumber: "CLM-2024-002201",
+      policyholderName: "Robert Williams",
+      vehicleInfo: "2019 BMW X5",
+      vin: "5UXCR6C05KL123456",
+      incidentDate: new Date("2024-03-19"),
+      incidentDescription: "Vandalism damage to multiple panels",
+      status: "pending_review",
+      priority: "medium",
+      submittedAt: new Date(Date.now() - 8 * 60 * 60 * 1000), // 8 hours ago
+      totalEstimate: "3450.00",
+      agentNotes: null,
+      assignedAgent: "Sarah Johnson",
+    };
+    
+    const claim6: Claim = {
+      id: claim6Id,
+      claimNumber: "CLM-2024-002245",
+      policyholderName: "Lisa Park",
+      vehicleInfo: "2022 Subaru Outback",
+      vin: "4S4BTANC2N3123456",
+      incidentDate: new Date("2024-03-21"),
+      incidentDescription: "Hail damage to roof and hood",
+      status: "pending_review",
+      priority: "high",
+      submittedAt: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
+      totalEstimate: "5680.00",
+      agentNotes: null,
+      assignedAgent: "Sarah Johnson",
+    };
+    
+    const claim7: Claim = {
+      id: claim7Id,
+      claimNumber: "CLM-2024-002289",
+      policyholderName: "Carlos Santos",
+      vehicleInfo: "2021 Chevrolet Silverado",
+      vin: "1GCUYBE0XMZ123456",
+      incidentDate: new Date("2024-03-23"),
+      incidentDescription: "Minor fender bender",
+      status: "pending_review",
+      priority: "low",
+      submittedAt: new Date(Date.now() - 45 * 60 * 1000), // 45 minutes ago
+      totalEstimate: "980.00",
+      agentNotes: null,
+      assignedAgent: "Sarah Johnson",
+    };
+    
+    const claim8: Claim = {
+      id: claim8Id,
+      claimNumber: "CLM-2024-002301",
+      policyholderName: "Emily Davis",
+      vehicleInfo: "2020 Audi A4",
+      vin: "WAUENAF40LA123456",
+      incidentDate: new Date("2024-03-22"),
+      incidentDescription: "Shopping cart damage to door",
+      status: "pending_review",
+      priority: "low",
+      submittedAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
+      totalEstimate: "750.00",
+      agentNotes: null,
+      assignedAgent: "Sarah Johnson",
+    };
+    
+    // Approved claims
+    const approvedClaim1: Claim = {
+      id: approvedClaim1Id,
+      claimNumber: "CLM-2024-001756",
+      policyholderName: "Mark Johnson",
+      vehicleInfo: "2021 Jeep Wrangler",
+      vin: "1C4HJXDG5MW123456",
+      incidentDate: new Date("2024-03-10"),
+      incidentDescription: "Off-road damage to undercarriage",
+      status: "approved",
+      priority: "medium",
+      submittedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+      totalEstimate: "2890.00",
+      agentNotes: "Approved after parts verification",
+      assignedAgent: "Sarah Johnson",
+    };
+    
+    const approvedClaim2: Claim = {
+      id: approvedClaim2Id,
+      claimNumber: "CLM-2024-001623",
+      policyholderName: "Rachel Green",
+      vehicleInfo: "2022 Mazda CX-5",
+      vin: "JM3KFBDM7N0123456",
+      incidentDate: new Date("2024-03-08"),
+      incidentDescription: "Tree branch damage during storm",
+      status: "approved",
+      priority: "high",
+      submittedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+      totalEstimate: "4750.00",
+      agentNotes: "Approved - weather related incident confirmed",
+      assignedAgent: "Sarah Johnson",
+    };
+    
+    const approvedClaim3: Claim = {
+      id: approvedClaim3Id,
+      claimNumber: "CLM-2024-001589",
+      policyholderName: "James Wilson",
+      vehicleInfo: "2019 Nissan Altima",
+      vin: "1N4AL3AP5KC123456",
+      incidentDate: new Date("2024-03-05"),
+      incidentDescription: "Rear bumper replacement needed",
+      status: "approved",
+      priority: "low",
+      submittedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      totalEstimate: "1650.00",
+      agentNotes: "Standard approval - straightforward repair",
+      assignedAgent: "Sarah Johnson",
+    };
+    
     this.claims.set(sampleClaimId, sampleClaim);
     this.claims.set(claim2Id, claim2);
     this.claims.set(claim3Id, claim3);
     this.claims.set(claim4Id, claim4);
+    this.claims.set(claim5Id, claim5);
+    this.claims.set(claim6Id, claim6);
+    this.claims.set(claim7Id, claim7);
+    this.claims.set(claim8Id, claim8);
+    this.claims.set(approvedClaim1Id, approvedClaim1);
+    this.claims.set(approvedClaim2Id, approvedClaim2);
+    this.claims.set(approvedClaim3Id, approvedClaim3);
 
     // Sample damage items
     const damageItems: DamageItem[] = [
