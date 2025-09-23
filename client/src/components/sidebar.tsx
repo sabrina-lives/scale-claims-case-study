@@ -49,16 +49,15 @@ export default function Sidebar() {
           className="space-y-2"
         >
           <AccordionItem value="active-claims" className="border-0">
-            <AccordionTrigger className="p-0 hover:no-underline">
-              <Button
-                variant="secondary"
-                className="w-full justify-start bg-accent text-accent-foreground"
-                data-testid="nav-active-claims"
-              >
+            <AccordionTrigger 
+              className="p-3 hover:no-underline bg-accent text-accent-foreground rounded-md hover:bg-accent/90 flex items-center justify-between w-full"
+              data-testid="nav-active-claims"
+            >
+              <div className="flex items-center">
                 <ClipboardList className="w-5 h-5 mr-3" />
                 <span>Active Claims</span>
-                <Badge className="ml-auto bg-primary text-primary-foreground mr-2">{activeClaims.length}</Badge>
-              </Button>
+              </div>
+              <Badge className="bg-primary text-primary-foreground">{activeClaims.length}</Badge>
             </AccordionTrigger>
             <AccordionContent className="pt-2 pb-0">
               <div className="space-y-1 ml-8">
@@ -104,16 +103,15 @@ export default function Sidebar() {
           </AccordionItem>
           
           <AccordionItem value="approved-claims" className="border-0">
-            <AccordionTrigger className="p-0 hover:no-underline">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                data-testid="nav-approved"
-              >
+            <AccordionTrigger 
+              className="p-3 hover:no-underline text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md flex items-center justify-between w-full"
+              data-testid="nav-approved"
+            >
+              <div className="flex items-center">
                 <CheckCircle2 className="w-5 h-5 mr-3" />
                 <span>Approved</span>
-                <Badge className="ml-auto bg-green-500 text-white mr-2">{approvedClaims.length}</Badge>
-              </Button>
+              </div>
+              <Badge className="bg-green-500 text-white">{approvedClaims.length}</Badge>
             </AccordionTrigger>
             <AccordionContent className="pt-2 pb-0">
               <div className="space-y-1 ml-8">
