@@ -1,8 +1,8 @@
-# Auto Claims Estimates AI System
+# Fave Insurance Co - Claims Review System
 
 ## Overview
 
-This is an AI-powered auto insurance claims processing system built to streamline damage assessment workflows. The application enables insurance claims agents to review AI-generated damage analysis and cost estimates through an intuitive web interface. The system processes vehicle damage photos using computer vision, categorizes damage severity, and provides automated repair cost estimates to accelerate the manual claims review process.
+This is Fave Insurance Co's AI-powered auto insurance claims processing system built to streamline damage assessment workflows. The application enables insurance claims agents to review AI-generated damage analysis and cost estimates through an intuitive web interface. The system processes vehicle damage photos using computer vision, categorizes damage severity, and provides automated repair cost estimates to accelerate the manual claims review process.
 
 ## User Preferences
 

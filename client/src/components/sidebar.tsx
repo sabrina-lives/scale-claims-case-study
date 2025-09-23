@@ -12,7 +12,7 @@ export default function Sidebar() {
             <Car className="w-4 h-4 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-semibold text-lg">Scale AI</h1>
+            <h1 className="font-semibold text-lg">Fave Insurance Co</h1>
             <p className="text-sm text-muted-foreground">Claims Review</p>
           </div>
         </div>
