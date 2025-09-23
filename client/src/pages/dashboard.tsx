@@ -98,6 +98,19 @@ export default function Dashboard() {
         <div className="flex-1 flex overflow-hidden">
           {/* Left Panel - Photo Viewer and Analysis */}
           <div className="flex-1 p-6 overflow-auto">
+            {/* Photo Viewer */}
+            <PhotoViewer 
+              photos={photosForCategory}
+              primaryPhoto={primaryPhoto}
+              damageItems={damageItems}
+              categories={photoCategories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+            
+            {/* AI Analysis Results */}
+            <DamageAnalysis damageItems={damageItems} />
+            
             {/* Case Details */}
             <div className="bg-card rounded-lg border border-border p-6 mb-6">
               <h3 className="text-lg font-semibold mb-4">Case Details</h3>
@@ -120,19 +133,6 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            
-            {/* Photo Viewer */}
-            <PhotoViewer 
-              photos={photosForCategory}
-              primaryPhoto={primaryPhoto}
-              damageItems={damageItems}
-              categories={photoCategories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-            />
-            
-            {/* AI Analysis Results */}
-            <DamageAnalysis damageItems={damageItems} />
           </div>
           
           {/* Right Panel - Cost Estimation and Review */}
