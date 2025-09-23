@@ -1,8 +1,28 @@
-import { Car, ClipboardList, CheckCircle2, Clock, BarChart3, User, Settings } from "lucide-react";
+import { Car, ClipboardList, CheckCircle2, Clock, BarChart3, User, Settings, ChevronDown, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
+import type { Claim } from "@shared/schema";
+import { useState } from "react";
 
 export default function Sidebar() {
+  const [location, setLocation] = useLocation();
+  const [expandedAccordion, setExpandedAccordion] = useState<string>("active-claims");
+
+  // Fetch all claims
+  const { data: claims = [] } = useQuery<Claim[]>({
+    queryKey: ["/api/claims"],
+  });
+
+  // Filter active claims (pending_review status)
+  const activeClaims = claims.filter(claim => claim.status === "pending_review");
+  
+  const handleClaimClick = (claimNumber: string) => {
+    setLocation(`/claims/${claimNumber}`);
+  };
+
   return (
     <div className="w-64 bg-card border-r border-border flex flex-col">
       {/* Logo and Header */}
@@ -19,44 +39,99 @@ export default function Sidebar() {
       </div>
       
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
-        <Button
-          variant="secondary"
-          className="w-full justify-start bg-accent text-accent-foreground"
-          data-testid="nav-active-claims"
+      <nav className="flex-1 p-4">
+        <Accordion 
+          type="single" 
+          collapsible 
+          value={expandedAccordion} 
+          onValueChange={setExpandedAccordion}
+          className="space-y-2"
         >
-          <ClipboardList className="w-5 h-5 mr-3" />
-          <span>Active Claims</span>
-          <Badge className="ml-auto bg-primary text-primary-foreground">23</Badge>
-        </Button>
+          <AccordionItem value="active-claims" className="border-0">
+            <AccordionTrigger className="p-0 hover:no-underline">
+              <Button
+                variant="secondary"
+                className="w-full justify-start bg-accent text-accent-foreground"
+                data-testid="nav-active-claims"
+              >
+                <ClipboardList className="w-5 h-5 mr-3" />
+                <span>Active Claims</span>
+                <Badge className="ml-auto bg-primary text-primary-foreground mr-2">{activeClaims.length}</Badge>
+              </Button>
+            </AccordionTrigger>
+            <AccordionContent className="pt-2 pb-0">
+              <div className="space-y-1 ml-8">
+                {activeClaims.map((claim) => {
+                  const isActive = location.includes(claim.claimNumber);
+                  const getPriorityColor = (priority: string) => {
+                    switch (priority) {
+                      case "high": return "text-red-600";
+                      case "medium": return "text-amber-600";
+                      case "low": return "text-green-600";
+                      default: return "text-gray-600";
+                    }
+                  };
+                  
+                  return (
+                    <Button
+                      key={claim.id}
+                      variant={isActive ? "secondary" : "ghost"}
+                      size="sm"
+                      className={`w-full justify-start text-left h-auto py-2 ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
+                      onClick={() => handleClaimClick(claim.claimNumber)}
+                      data-testid={`claim-${claim.claimNumber}`}
+                    >
+                      <div className="flex flex-col items-start w-full">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-medium text-xs">{claim.claimNumber}</span>
+                          <Badge variant="outline" className={`text-xs h-4 ${getPriorityColor(claim.priority)}`}>
+                            {claim.priority.toUpperCase()}
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground truncate w-full">
+                          {claim.policyholderName}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          ${parseInt(claim.totalEstimate || "0").toLocaleString()}
+                        </div>
+                      </div>
+                    </Button>
+                  );
+                })}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
         
-        <Button
-          variant="ghost"
-          className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-          data-testid="nav-approved"
-        >
-          <CheckCircle2 className="w-5 h-5 mr-3" />
-          <span>Approved</span>
-        </Button>
-        
-        <Button
-          variant="ghost"
-          className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-          data-testid="nav-pending"
-        >
-          <Clock className="w-5 h-5 mr-3" />
-          <span>Pending Review</span>
-          <Badge className="ml-auto bg-amber-500 text-white">8</Badge>
-        </Button>
-        
-        <Button
-          variant="ghost"
-          className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-          data-testid="nav-analytics"
-        >
-          <BarChart3 className="w-5 h-5 mr-3" />
-          <span>Analytics</span>
-        </Button>
+        <div className="mt-4 space-y-2">
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            data-testid="nav-approved"
+          >
+            <CheckCircle2 className="w-5 h-5 mr-3" />
+            <span>Approved</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            data-testid="nav-pending"
+          >
+            <Clock className="w-5 h-5 mr-3" />
+            <span>Pending Review</span>
+            <Badge className="ml-auto bg-amber-500 text-white">{activeClaims.length}</Badge>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            data-testid="nav-analytics"
+          >
+            <BarChart3 className="w-5 h-5 mr-3" />
+            <span>Analytics</span>
+          </Button>
+        </div>
       </nav>
       
       {/* User Info */}

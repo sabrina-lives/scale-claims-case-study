@@ -66,8 +66,11 @@ export class MemStorage implements IStorage {
 
   private initializeSampleData() {
     const sampleClaimId = randomUUID();
+    const claim2Id = randomUUID();
+    const claim3Id = randomUUID();
+    const claim4Id = randomUUID();
     
-    // Sample claim
+    // Sample claims
     const sampleClaim: Claim = {
       id: sampleClaimId,
       claimNumber: "CLM-2024-001847",
@@ -83,7 +86,59 @@ export class MemStorage implements IStorage {
       agentNotes: null,
       assignedAgent: "Sarah Johnson",
     };
+    
+    const claim2: Claim = {
+      id: claim2Id,
+      claimNumber: "CLM-2024-001952",
+      policyholderName: "Jennifer Chen",
+      vehicleInfo: "2021 Honda Accord",
+      vin: "1HGCV1F30MA123789",
+      incidentDate: new Date("2024-03-20"),
+      incidentDescription: "Rear-end collision on highway",
+      status: "pending_review",
+      priority: "medium",
+      submittedAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+      totalEstimate: "4235.00",
+      agentNotes: null,
+      assignedAgent: "Sarah Johnson",
+    };
+    
+    const claim3: Claim = {
+      id: claim3Id,
+      claimNumber: "CLM-2024-002103",
+      policyholderName: "David Thompson",
+      vehicleInfo: "2020 Ford F-150",
+      vin: "1FTFW1ET5LFA12345",
+      incidentDate: new Date("2024-03-18"),
+      incidentDescription: "Side impact from intersection",
+      status: "pending_review",
+      priority: "high",
+      submittedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+      totalEstimate: "6780.00",
+      agentNotes: null,
+      assignedAgent: "Sarah Johnson",
+    };
+    
+    const claim4: Claim = {
+      id: claim4Id,
+      claimNumber: "CLM-2024-002156",
+      policyholderName: "Amanda Martinez",
+      vehicleInfo: "2023 Tesla Model 3",
+      vin: "5YJ3E1EA0PF123456",
+      incidentDate: new Date("2024-03-22"),
+      incidentDescription: "Door damage in parking garage",
+      status: "pending_review",
+      priority: "low",
+      submittedAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+      totalEstimate: "1240.00",
+      agentNotes: null,
+      assignedAgent: "Sarah Johnson",
+    };
+    
     this.claims.set(sampleClaimId, sampleClaim);
+    this.claims.set(claim2Id, claim2);
+    this.claims.set(claim3Id, claim3);
+    this.claims.set(claim4Id, claim4);
 
     // Sample damage items
     const damageItems: DamageItem[] = [
