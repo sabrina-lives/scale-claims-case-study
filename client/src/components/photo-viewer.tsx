@@ -84,7 +84,7 @@ export default function PhotoViewer({
         ))}
         
         {/* Annotation Tools */}
-        <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm rounded-lg p-3 space-y-2">
+        <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm rounded-lg p-3 space-y-3">
           <Button
             size="sm"
             className="w-10 h-10 p-0 bg-primary text-primary-foreground"
