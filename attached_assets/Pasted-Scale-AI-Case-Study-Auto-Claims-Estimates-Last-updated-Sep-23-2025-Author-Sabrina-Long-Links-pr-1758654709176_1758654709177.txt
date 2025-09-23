@@ -1,0 +1,80 @@
+Scale AI Case Study: Auto Claims Estimates
+Last updated: Sep 23, 2025
+Author: Sabrina Long
+Links: prototype |  Github
+
+
+Problem statement
+Car insurance companies process thousands of insurance claims every day. Historically, the claims review process has been manual, with thousands-strong workforces of human agents reviewing damage photos, estimating repair costs, and more. This process is slow, expensive, and inconsistent in quality. Through our partnership with [leading car insurance co], Scale has the opportunity to dramatically improve this process and industry by automating damage assessment and helping our customer increase claims processing accuracy, lower costs, and provide better experiences to end users. 
+
+Product vision
+Make claims processing seamless and intelligent for insurance companies by transforming slow, manual damage assessments into AI-assisted workflows. Empower claims agents with instant, accurate insights while building the foundation to unlock automation across the entire claims journey—from initial reporting to final settlement—revolutionizing how our insurance partner serves customers and establishing Scale as the definitive AI platform for enterprise insurance transformation.
+
+Product goals
+
+
+
+User stories
+
+Category
+Pri
+User story
+Submit photos
+P0
+As a policyholder, I want an easy way to submit photos and information about my damaged vehicle so that I can get a response on my claim ASAP.
+Claims update
+P0
+As a policyholder, I want to receive updates about my claim quickly and efficiently, 
+Review
+P0
+As a claims agent, I want to see the automated system’s damage analysis alongside the original photos and metadata in a single interface, so that I can override recommendations when my expertise identifies issues the AI missed.
+Assessment
+P0
+As a claims agent, I want the automated system to analyze damage photos and provide categorized damage assessment (minor/moderate/severe) with confidence scores, so that I can quickly focus my expertise on uncertain cases and approve straightforward assessments.
+Estimate
+P0
+As a claims agent, I want AI-generated repair cost estimates that pull from trusted sources and databases, so that I can produce and review accurate estimates without manually consulting multiple pricing databases.
+Approval
+P0
+As a senior claims adjustor, I want to have the inputs (photos, sources consulted, etc.) and audit trail for a given repair estimate, so that I can review with confidence and identify the root cause when an estimate is not correct. 
+Authorization
+P1
+As a senior claims adjustor, I want approved repair estimates to be automatically sent to pre-qualified repair shops in the customer's area, so that I can focus on complex claim reviews instead of administrative routing tasks.
+
+
+MVP
+The initial MVP will focus on the core damage assessment workflow, replacing manual photo review and repair estimates with AI-assisted analysis for claims agents and adjustors.
+Key features
+AI-powered damage detection → Computer vision analysis of vehicle damage photos with damage category (scratches, dents, structural damage), damage severity (small, medium, large), and confidence scoring.
+Integrated review interface → Single dashboard showing original photos, policyholder-submitted details, AI analysis with highlighted damage areas, and claims agent override capabilities. Low confidence cases will require review, but high-confidence cases are optimized for batch approval.
+Automated cost estimation → AI-generated repair estimates pulling from industry databases (local market data, manuals, repair cost databases), with agent adjustment functionality.
+Audit trail & approval workflow → Complete audit log with AI recommendations, human agent changes, and senior adjustor review. Full traceability for compliance and model improvement.
+Prioritization framework
+Lorem ipsum
+Lorem ipsum
+Lorem ipsum
+Lorem ipsum
+
+
+
+Key tradeoff: why not create a customer-facing claims agent?
+
+High-cost, high-risk decisions → Car repair costs range from hundreds to thousands of dollars. Incorrect repair estimates could cost customers significant money, and wrong damage assessments could result in vehicles being over- or under-repaired. Human oversight mitigates these risks in the initial phase.
+Leverage internal team to create data flywheel → Existing vision models need additional training for damage identification. Using the customer's internal claims team during the AI-assisted phase creates high-quality, labeled damage photos for fine-tuning and future full automation.
+Prioritize customer experience → Automated claims followed by human escalation creates a clunky, slow experience. In a commoditized insurance market where policyholders easily switch providers, maintaining customer satisfaction is critical.
+
+Success metrics
+
+Leading indicators
+(NSM)
+
+Lagging indicators
+
+Technical architecture & AI integration
+
+k
+
+
+Human <> AI interaction
+
+
