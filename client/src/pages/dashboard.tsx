@@ -112,7 +112,7 @@ export default function Dashboard() {
             <DamageAnalysis damageItems={damageItems} />
             
             {/* Case Details */}
-            <div className="bg-card rounded-lg border border-border p-6 mb-6">
+            <div className="bg-card rounded-lg border border-border p-6 mb-6 mt-6">
               <h3 className="text-lg font-semibold mb-4">Case Details</h3>
               <div className="grid grid-cols-3 gap-6">
                 <div>
