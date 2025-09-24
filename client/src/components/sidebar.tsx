@@ -2,24 +2,48 @@ import { Car, ClipboardList, CheckCircle2, Clock, BarChart3, User, Settings, Che
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import type { Claim } from "@shared/schema";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Sidebar() {
+export type UserRole = "claims_agent" | "senior_adjuster";
+
+interface SidebarProps {
+  userRole?: UserRole;
+  onRoleChange?: (role: UserRole) => void;
+}
+
+export default function Sidebar({ userRole = "claims_agent", onRoleChange }: SidebarProps) {
   const [location, setLocation] = useLocation();
-  const [expandedAccordion, setExpandedAccordion] = useState<string>("active-claims");
 
   // Fetch all claims
   const { data: claims = [] } = useQuery<Claim[]>({
     queryKey: ["/api/claims"],
   });
 
-  // Filter claims by status
-  const activeClaims = claims.filter(claim => claim.status === "pending_review");
-  const approvedClaims = claims.filter(claim => claim.status === "approved");
-  
+  // Filter claims by status based on user role
+  const activeClaims = userRole === "claims_agent"
+    ? claims.filter(claim => claim.status === "pending_review")
+    : claims.filter(claim => claim.status === "approved"); // For senior adjuster, "Review Needed" are approved claims
+
+  const approvedClaims = userRole === "claims_agent"
+    ? claims.filter(claim => claim.status === "approved")
+    : claims.filter(claim => claim.status === "sent_to_shop"); // For senior adjuster, "Approved" are sent to shop
+
+  // Accordion state management
+  const [expandedAccordion, setExpandedAccordion] = useState<string>("active-claims");
+
+  // Update accordion based on current claim status
+  useEffect(() => {
+    const currentClaim = claims.find(claim => location.includes(claim.claimNumber));
+    if (currentClaim) {
+      const targetAccordion = currentClaim.status === "approved" ? "approved-claims" : "active-claims";
+      setExpandedAccordion(targetAccordion);
+    }
+  }, [location, claims]);
+
   const handleClaimClick = (claimNumber: string) => {
     setLocation(`/claims/${claimNumber}`);
   };
@@ -55,7 +79,7 @@ export default function Sidebar() {
             >
               <div className="flex items-center">
                 <ClipboardList className="w-5 h-5 mr-3" />
-                <span>Active Claims</span>
+                <span>{userRole === "claims_agent" ? "Active Claims" : "To Review"}</span>
               </div>
               <Badge className="bg-primary text-primary-foreground">{activeClaims.length}</Badge>
             </AccordionTrigger>
@@ -81,11 +105,11 @@ export default function Sidebar() {
                       onClick={() => handleClaimClick(claim.claimNumber)}
                       data-testid={`claim-${claim.claimNumber}`}
                     >
-                      <div className="flex flex-col items-start w-full">
-                        <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-xs">{claim.claimNumber}</span>
-                          <Badge variant="outline" className={`text-xs h-4 ${getPriorityColor(claim.priority)}`}>
-                            {claim.priority.toUpperCase()}
+                      <div className="flex flex-col items-start w-full min-w-0">
+                        <div className="flex items-center justify-between w-full gap-2">
+                          <span className="font-medium text-xs truncate">{claim.claimNumber}</span>
+                          <Badge variant="outline" className={`text-xs h-4 px-1 flex-shrink-0 ${getPriorityColor(claim.priority)}`}>
+                            {claim.priority.charAt(0).toUpperCase() + claim.priority.slice(1)}
                           </Badge>
                         </div>
                         <div className="text-xs text-muted-foreground truncate w-full">
@@ -127,11 +151,11 @@ export default function Sidebar() {
                       onClick={() => handleClaimClick(claim.claimNumber)}
                       data-testid={`claim-${claim.claimNumber}`}
                     >
-                      <div className="flex flex-col items-start w-full">
-                        <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-xs">{claim.claimNumber}</span>
-                          <Badge variant="outline" className="text-xs h-4 text-green-600 border-green-200">
-                            APPROVED
+                      <div className="flex flex-col items-start w-full min-w-0">
+                        <div className="flex items-center justify-between w-full gap-2">
+                          <span className="font-medium text-xs truncate">{claim.claimNumber}</span>
+                          <Badge variant="outline" className="text-xs h-4 px-1 flex-shrink-0 text-green-600 border-green-200">
+                            Approved
                           </Badge>
                         </div>
                         <div className="text-xs text-muted-foreground truncate w-full">
@@ -152,18 +176,54 @@ export default function Sidebar() {
       
       {/* User Info */}
       <div className="p-4 border-t border-border">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-            <User className="w-4 h-4 text-gray-600" />
-          </div>
-          <div className="flex-1">
-            <p className="font-medium text-sm" data-testid="text-agent-name">Sarah Johnson</p>
-            <p className="text-xs text-muted-foreground">Claims Agent</p>
-          </div>
-          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-            <Settings className="w-4 h-4" />
-          </Button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="flex items-center space-x-3 cursor-pointer hover:bg-accent/50 p-2 rounded-md transition-colors">
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-gray-600" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-sm" data-testid="text-agent-name">
+                  {userRole === "claims_agent" ? "Sarah Johnson" : "Michael Chen"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {userRole === "claims_agent" ? "Claims Agent" : "Senior Adjuster"}
+                </p>
+              </div>
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem
+              onClick={() => onRoleChange?.("claims_agent")}
+              className={userRole === "claims_agent" ? "bg-accent" : ""}
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                  <User className="w-3 h-3 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-sm">Sarah Johnson</p>
+                  <p className="text-xs text-muted-foreground">Claims Agent</p>
+                </div>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onRoleChange?.("senior_adjuster")}
+              className={userRole === "senior_adjuster" ? "bg-accent" : ""}
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                  <User className="w-3 h-3 text-green-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-sm">Michael Chen</p>
+                  <p className="text-xs text-muted-foreground">Senior Adjuster</p>
+                </div>
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

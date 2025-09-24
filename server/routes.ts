@@ -103,16 +103,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/claims/:id/reject", async (req, res) => {
     try {
       const { reason } = req.body;
-      
+
       const updatedClaim = await storage.updateClaim(req.params.id, {
         status: "rejected",
         agentNotes: reason,
       });
-      
+
       if (!updatedClaim) {
         return res.status(404).json({ error: "Claim not found" });
       }
-      
+
       // Create audit log entry
       await storage.createAuditLog({
         claimId: req.params.id,
@@ -121,11 +121,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
         performedBy: "Sarah Johnson",
         metadata: { reason },
       });
-      
+
       res.json(updatedClaim);
     } catch (error) {
       console.error("Error rejecting claim:", error);
       res.status(500).json({ error: "Failed to reject claim" });
+    }
+  });
+
+  // Send claim to repair shop
+  app.post("/api/claims/:id/send-to-shop", async (req, res) => {
+    try {
+      const { shopId, notes } = req.body;
+
+      const updatedClaim = await storage.updateClaim(req.params.id, {
+        status: "sent_to_shop",
+        adjusterNotes: notes,
+        assignedShopId: shopId,
+      });
+
+      if (!updatedClaim) {
+        return res.status(404).json({ error: "Claim not found" });
+      }
+
+      // Create audit log entry
+      await storage.createAuditLog({
+        claimId: req.params.id,
+        action: "sent_to_shop",
+        description: `Claim sent to repair shop (ID: ${shopId})`,
+        performedBy: "Michael Chen",
+        metadata: { shopId, notes },
+      });
+
+      res.json(updatedClaim);
+    } catch (error) {
+      console.error("Error sending claim to shop:", error);
+      res.status(500).json({ error: "Failed to send claim to shop" });
     }
   });
 

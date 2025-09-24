@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Check, X, Users, Calculator } from "lucide-react";
+import { Check, Users } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import type { Claim } from "@shared/schema";
 
@@ -111,10 +111,11 @@ export default function ReviewPanel({ claim, totalEstimate }: ReviewPanelProps) 
   };
 
   const isLoading = updateClaimMutation.isPending || approveMutation.isPending || rejectMutation.isPending;
+  const isApproved = claim.status === "approved";
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6 mb-6">
-      <h3 className="text-lg font-semibold mb-4">Agent Review</h3>
+    <div className="bg-card rounded-lg border border-border p-4 mb-4">
+      <h3 className="text-lg font-semibold mb-3">Agent Review</h3>
       
       {/* Override Controls */}
       <div className="space-y-4">
@@ -122,26 +123,22 @@ export default function ReviewPanel({ claim, totalEstimate }: ReviewPanelProps) 
           <Label htmlFor="estimate-input" className="block text-sm font-medium mb-2">
             Adjust Total Estimate
           </Label>
-          <div className="flex items-center space-x-2">
-            <Input
-              id="estimate-input"
-              type="number"
-              value={adjustedEstimate}
-              onChange={(e) => setAdjustedEstimate(e.target.value)}
-              className="flex-1"
-              data-testid="input-estimate"
-            />
-            <Button variant="secondary" size="sm" data-testid="button-calculator">
-              <Calculator className="w-4 h-4" />
-            </Button>
-          </div>
+          <Input
+            id="estimate-input"
+            type="number"
+            value={adjustedEstimate}
+            onChange={(e) => setAdjustedEstimate(e.target.value)}
+            className="w-full"
+            data-testid="input-estimate"
+            disabled={isApproved}
+          />
         </div>
         
         <div>
           <Label htmlFor="priority-select" className="block text-sm font-medium mb-2">
             Priority Level
           </Label>
-          <Select value={priority} onValueChange={setPriority}>
+          <Select value={priority} onValueChange={setPriority} disabled={isApproved}>
             <SelectTrigger id="priority-select" data-testid="select-priority">
               <SelectValue />
             </SelectTrigger>
@@ -165,41 +162,46 @@ export default function ReviewPanel({ claim, totalEstimate }: ReviewPanelProps) 
             onChange={(e) => setNotes(e.target.value)}
             className="resize-none"
             data-testid="textarea-notes"
+            disabled={isApproved}
           />
         </div>
       </div>
       
-      {/* Action Buttons */}
-      <div className="flex space-x-2 mt-4">
-        <Button 
-          className="flex-1 bg-primary text-primary-foreground"
-          onClick={handleApprove}
-          disabled={isLoading}
-          data-testid="button-approve"
-        >
-          <Check className="w-4 h-4 mr-2" />
-          {approveMutation.isPending ? "Approving..." : "Approve"}
-        </Button>
-        <Button 
-          variant="destructive"
-          className="flex-1"
-          onClick={handleReject}
-          disabled={isLoading}
-          data-testid="button-reject"
-        >
-          <X className="w-4 h-4 mr-2" />
-          {rejectMutation.isPending ? "Rejecting..." : "Reject"}
-        </Button>
-      </div>
-      <Button 
-        variant="secondary"
-        className="w-full mt-2"
-        disabled={isLoading}
-        data-testid="button-senior-review"
-      >
-        <Users className="w-4 h-4 mr-2" />
-        Request Senior Review
-      </Button>
+      {/* Action Buttons or Status */}
+      {claim.status === "approved" ? (
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center text-blue-700">
+            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+            <span className="font-medium">Waiting on Adjuster</span>
+          </div>
+          <p className="text-sm text-blue-600 mt-1">
+            This claim has been approved and is awaiting adjuster review.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="flex space-x-2 mt-4">
+            <Button
+              className="w-full bg-primary text-primary-foreground"
+              onClick={handleApprove}
+              disabled={isLoading}
+              data-testid="button-approve"
+            >
+              <Check className="w-4 h-4 mr-2" />
+              {approveMutation.isPending ? "Approving..." : "Approve Estimate"}
+            </Button>
+          </div>
+          <Button
+            variant="secondary"
+            className="w-full mt-2"
+            disabled={isLoading}
+            data-testid="button-senior-review"
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Request Senior Review
+          </Button>
+        </>
+      )}
     </div>
   );
 }
