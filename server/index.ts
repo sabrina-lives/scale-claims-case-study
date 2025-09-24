@@ -3,6 +3,11 @@ import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Detect deployment environment and set NODE_ENV accordingly
+if (process.env.REPLIT_DEPLOYMENT === '1' && !process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'production';
+}
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -65,7 +70,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
-  const host = process.env.HOST || "localhost";
+  const host = process.env.HOST || "0.0.0.0";
   server.listen(port, host, () => {
     log(`serving on http://${host}:${port}`);
   });
