@@ -51,6 +51,29 @@ export default function Sidebar({ userRole = "claims_agent", onRoleChange }: Sid
     }
   });
 
+  // Reset data mutation
+  const resetDataMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/reset-data', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reset data');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      // Invalidate and refetch all claims data
+      queryClient.invalidateQueries();
+      console.log('Data reset to initial state');
+    },
+    onError: (error) => {
+      console.error('Error resetting data:', error);
+    }
+  });
+
   // Filter claims by status based on user role
   const activeClaims = userRole === "claims_agent"
     ? claims.filter(claim => claim.status === "pending_review")
@@ -78,6 +101,10 @@ export default function Sidebar({ userRole = "claims_agent", onRoleChange }: Sid
 
   const handleBatchApprove = () => {
     batchApproveMutation.mutate("high");
+  };
+
+  const handleResetData = () => {
+    resetDataMutation.mutate();
   };
 
   // Count high confidence claims for batch approve button
@@ -224,9 +251,20 @@ export default function Sidebar({ userRole = "claims_agent", onRoleChange }: Sid
           </AccordionItem>
         </Accordion>
       </nav>
-      
+
       {/* User Info */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border space-y-3">
+        {/* Reset Data Button */}
+        <Button
+          onClick={handleResetData}
+          disabled={resetDataMutation.isPending}
+          variant="outline"
+          size="sm"
+          className="w-full text-xs"
+        >
+          {resetDataMutation.isPending ? "Resetting..." : "Reset Demo Data"}
+        </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex items-center space-x-3 cursor-pointer hover:bg-accent/50 p-2 rounded-md transition-colors">

@@ -254,6 +254,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reset data to initial state
+  app.post("/api/reset-data", async (req, res) => {
+    try {
+      console.log("Reset data endpoint called");
+      const claimsBefore = await storage.getAllClaims();
+      console.log(`Claims before reset: ${claimsBefore.length}, high confidence pending: ${claimsBefore.filter(c => c.aiConfidence === 'high' && c.status === 'pending_review').length}`);
+
+      await storage.resetToInitialData();
+
+      const claimsAfter = await storage.getAllClaims();
+      console.log(`Claims after reset: ${claimsAfter.length}, high confidence pending: ${claimsAfter.filter(c => c.aiConfidence === 'high' && c.status === 'pending_review').length}`);
+
+      res.json({ message: "Data reset to initial state successfully" });
+    } catch (error) {
+      console.error("Error resetting data:", error);
+      res.status(500).json({ error: "Failed to reset data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

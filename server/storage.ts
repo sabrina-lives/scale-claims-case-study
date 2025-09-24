@@ -42,6 +42,9 @@ export interface IStorage {
   // Audit log methods
   getAuditLogByClaim(claimId: string): Promise<AuditLog[]>;
   createAuditLog(auditLog: InsertAuditLog): Promise<AuditLog>;
+
+  // Reset method
+  resetToInitialData(): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -1339,6 +1342,36 @@ export class MemStorage implements IStorage {
     };
     this.auditLogs.set(id, auditLog);
     return auditLog;
+  }
+
+  async resetToInitialData(): Promise<void> {
+    console.log("Starting reset to initial data");
+
+    // Clear all existing data
+    console.log(`Before clear - claims: ${this.claims.size}, damageItems: ${this.damageItems.size}`);
+    this.users.clear();
+    this.claims.clear();
+    this.damageItems.clear();
+    this.photos.clear();
+    this.costBreakdowns.clear();
+    this.auditLogs.clear();
+    console.log(`After clear - claims: ${this.claims.size}`);
+
+    // Reinitialize with fresh sample data
+    this.initializeSampleData();
+    console.log(`After init - claims: ${this.claims.size}`);
+
+    // Force high confidence claims back to pending_review for demo purposes
+    const highConfidenceClaims = Array.from(this.claims.values()).filter(c => c.aiConfidence === 'high');
+    highConfidenceClaims.forEach(claim => {
+      const updatedClaim = {
+        ...claim,
+        status: 'pending_review' as const,
+        agentNotes: null
+      };
+      this.claims.set(claim.id, updatedClaim);
+    });
+    console.log(`Reset ${highConfidenceClaims.length} high confidence claims to pending_review`);
   }
 }
 
