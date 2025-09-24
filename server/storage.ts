@@ -224,12 +224,12 @@ export class MemStorage implements IStorage {
       vin: "1C4HJXDG5MW123456",
       incidentDate: new Date("2024-03-10"),
       incidentDescription: "Off-road damage to undercarriage",
-      status: "approved",
-      priority: "medium",
-      aiConfidence: "medium", // medium priority -> medium confidence
+      status: "pending_review",
+      priority: "low",
+      aiConfidence: "high", // changed to high confidence for batch testing
       submittedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
       totalEstimate: "2890.00",
-      agentNotes: "Approved after parts verification",
+      agentNotes: null,
       assignedAgent: "Sarah Johnson",
     };
     
@@ -258,12 +258,12 @@ export class MemStorage implements IStorage {
       vin: "1N4AL3AP5KC123456",
       incidentDate: new Date("2024-03-05"),
       incidentDescription: "Rear bumper replacement needed",
-      status: "approved",
+      status: "pending_review",
       priority: "low",
       aiConfidence: "high", // low priority -> high confidence
       submittedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
       totalEstimate: "1650.00",
-      agentNotes: "Standard approval - straightforward repair",
+      agentNotes: null,
       assignedAgent: "Sarah Johnson",
     };
     
