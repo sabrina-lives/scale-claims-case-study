@@ -12,7 +12,8 @@ export const claims = pgTable("claims", {
   incidentDate: timestamp("incident_date").notNull(),
   incidentDescription: text("incident_description").notNull(),
   status: text("status").notNull().default("pending"),
-  priority: text("priority").notNull().default("medium"),
+  priority: text("priority").notNull().default("medium"), // Keep for backward compatibility
+  aiConfidence: text("ai_confidence").notNull().default("high"), // "high", "medium", "low"
   submittedAt: timestamp("submitted_at").defaultNow(),
   totalEstimate: decimal("total_estimate", { precision: 10, scale: 2 }),
   agentNotes: text("agent_notes"),

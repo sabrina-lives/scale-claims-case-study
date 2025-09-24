@@ -148,7 +148,7 @@ export default function Dashboard() {
                 {userRole === "claims_agent" ? "Claim Review" : "Shop Assignment"}: #{claim.claimNumber}
               </h2>
               <p className="text-muted-foreground">
-                Submitted {new Date(claim.submittedAt || "").toLocaleString()} • Priority: {claim.priority}
+                Submitted {new Date(claim.submittedAt || "").toLocaleString()} • AI Confidence: {claim.aiConfidence || 'medium'}
               </p>
             </div>
             <div className="flex items-center space-x-3">

@@ -89,6 +89,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Parking lot collision",
       status: "pending_review",
       priority: "high",
+      aiConfidence: "low", // high priority -> low confidence
       submittedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
       totalEstimate: "2847.00",
       agentNotes: null,
@@ -105,6 +106,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Rear-end collision on highway",
       status: "pending_review",
       priority: "medium",
+      aiConfidence: "medium", // medium priority -> medium confidence
       submittedAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
       totalEstimate: "4235.00",
       agentNotes: null,
@@ -121,6 +123,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Side impact from intersection",
       status: "pending_review",
       priority: "high",
+      aiConfidence: "low", // high priority -> low confidence
       submittedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
       totalEstimate: "6780.00",
       agentNotes: null,
@@ -137,6 +140,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Door damage in parking garage",
       status: "pending_review",
       priority: "low",
+      aiConfidence: "high", // low priority -> high confidence
       submittedAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
       totalEstimate: "1240.00",
       agentNotes: null,
@@ -153,6 +157,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Vandalism damage to multiple panels",
       status: "pending_review",
       priority: "medium",
+      aiConfidence: "medium", // medium priority -> medium confidence
       submittedAt: new Date(Date.now() - 8 * 60 * 60 * 1000), // 8 hours ago
       totalEstimate: "3450.00",
       agentNotes: null,
@@ -169,6 +174,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Hail damage to roof and hood",
       status: "pending_review",
       priority: "high",
+      aiConfidence: "low", // high priority -> low confidence
       submittedAt: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
       totalEstimate: "5680.00",
       agentNotes: null,
@@ -185,6 +191,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Minor fender bender",
       status: "pending_review",
       priority: "low",
+      aiConfidence: "high", // low priority -> high confidence
       submittedAt: new Date(Date.now() - 45 * 60 * 1000), // 45 minutes ago
       totalEstimate: "980.00",
       agentNotes: null,
@@ -201,6 +208,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Shopping cart damage to door",
       status: "pending_review",
       priority: "low",
+      aiConfidence: "high", // low priority -> high confidence
       submittedAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
       totalEstimate: "750.00",
       agentNotes: null,
@@ -218,6 +226,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Off-road damage to undercarriage",
       status: "approved",
       priority: "medium",
+      aiConfidence: "medium", // medium priority -> medium confidence
       submittedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
       totalEstimate: "2890.00",
       agentNotes: "Approved after parts verification",
@@ -234,6 +243,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Tree branch damage during storm",
       status: "approved",
       priority: "high",
+      aiConfidence: "low", // high priority -> low confidence
       submittedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
       totalEstimate: "4750.00",
       agentNotes: "Approved - weather related incident confirmed",
@@ -250,6 +260,7 @@ export class MemStorage implements IStorage {
       incidentDescription: "Rear bumper replacement needed",
       status: "approved",
       priority: "low",
+      aiConfidence: "high", // low priority -> high confidence
       submittedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
       totalEstimate: "1650.00",
       agentNotes: "Standard approval - straightforward repair",

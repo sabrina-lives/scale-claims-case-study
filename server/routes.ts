@@ -73,16 +73,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/claims/:id/approve", async (req, res) => {
     try {
       const { notes } = req.body;
-      
+
       const updatedClaim = await storage.updateClaim(req.params.id, {
         status: "approved",
         agentNotes: notes,
       });
-      
+
       if (!updatedClaim) {
         return res.status(404).json({ error: "Claim not found" });
       }
-      
+
       // Create audit log entry
       await storage.createAuditLog({
         claimId: req.params.id,
@@ -91,11 +91,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         performedBy: "Sarah Johnson",
         metadata: { notes, estimateAmount: updatedClaim.totalEstimate },
       });
-      
+
       res.json(updatedClaim);
     } catch (error) {
       console.error("Error approving claim:", error);
       res.status(500).json({ error: "Failed to approve claim" });
+    }
+  });
+
+  // Batch approve high confidence claims
+  app.post("/api/claims/batch-approve", async (req, res) => {
+    try {
+      const { confidence = "high" } = req.body;
+
+      // Get all pending claims with the specified confidence level
+      const allClaims = await storage.getAllClaims();
+      const highConfidenceClaims = allClaims.filter(
+        claim => claim.status === "pending_review" && claim.aiConfidence === confidence
+      );
+
+      const approvedClaims = [];
+
+      // Approve each high confidence claim
+      for (const claim of highConfidenceClaims) {
+        const updatedClaim = await storage.updateClaim(claim.id, {
+          status: "approved",
+          agentNotes: `Auto-approved via batch approval for ${confidence} confidence claims`,
+        });
+
+        if (updatedClaim) {
+          approvedClaims.push(updatedClaim);
+
+          // Create audit log entry for each
+          await storage.createAuditLog({
+            claimId: claim.id,
+            action: "claim_batch_approved",
+            description: `Claim batch-approved for ${confidence} confidence`,
+            performedBy: "Sarah Johnson",
+            metadata: {
+              confidence,
+              batchSize: highConfidenceClaims.length,
+              estimateAmount: updatedClaim.totalEstimate
+            },
+          });
+        }
+      }
+
+      res.json({
+        message: `Batch approved ${approvedClaims.length} ${confidence} confidence claims`,
+        approvedClaims: approvedClaims.length,
+        confidence,
+        claims: approvedClaims
+      });
+    } catch (error) {
+      console.error("Error batch approving claims:", error);
+      res.status(500).json({ error: "Failed to batch approve claims" });
     }
   });
 

@@ -1,9 +1,9 @@
-import { Car, ClipboardList, CheckCircle2, Clock, BarChart3, User, Settings, ChevronDown, ChevronRight } from "lucide-react";
+import { Car, ClipboardList, CheckCircle2, Clock, BarChart3, User, Settings, ChevronDown, ChevronRight, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import type { Claim } from "@shared/schema";
 import { useState, useEffect } from "react";
@@ -17,10 +17,38 @@ interface SidebarProps {
 
 export default function Sidebar({ userRole = "claims_agent", onRoleChange }: SidebarProps) {
   const [location, setLocation] = useLocation();
+  const queryClient = useQueryClient();
 
   // Fetch all claims
   const { data: claims = [] } = useQuery<Claim[]>({
     queryKey: ["/api/claims"],
+  });
+
+  // Batch approve mutation
+  const batchApproveMutation = useMutation({
+    mutationFn: async (confidence: string) => {
+      const response = await fetch('/api/claims/batch-approve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ confidence }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to batch approve claims');
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      // Invalidate and refetch claims to update the sidebar
+      queryClient.invalidateQueries({ queryKey: ["/api/claims"] });
+      console.log(`Batch approved ${data.approvedClaims} ${data.confidence} confidence claims`);
+    },
+    onError: (error) => {
+      console.error('Error batch approving claims:', error);
+    }
   });
 
   // Filter claims by status based on user role
@@ -47,6 +75,15 @@ export default function Sidebar({ userRole = "claims_agent", onRoleChange }: Sid
   const handleClaimClick = (claimNumber: string) => {
     setLocation(`/claims/${claimNumber}`);
   };
+
+  const handleBatchApprove = () => {
+    batchApproveMutation.mutate("high");
+  };
+
+  // Count high confidence claims for batch approve button
+  const highConfidenceClaims = activeClaims.filter(claim =>
+    claim.aiConfidence === "high" && claim.status === "pending_review"
+  );
 
   return (
     <div className="w-64 bg-card border-r border-border flex flex-col">
@@ -87,12 +124,12 @@ export default function Sidebar({ userRole = "claims_agent", onRoleChange }: Sid
               <div className="space-y-1 ml-8">
                 {activeClaims.map((claim) => {
                   const isActive = location.includes(claim.claimNumber);
-                  const getPriorityColor = (priority: string) => {
-                    switch (priority) {
-                      case "high": return "text-red-600";
-                      case "medium": return "text-amber-600";
-                      case "low": return "text-green-600";
-                      default: return "text-gray-600";
+                  const getConfidenceColor = (confidence: string) => {
+                    switch (confidence) {
+                      case "high": return "text-green-600 border-green-200"; // high confidence -> green
+                      case "medium": return "text-amber-600 border-amber-200"; // medium confidence -> amber
+                      case "low": return "text-red-600 border-red-200"; // low confidence -> red
+                      default: return "text-gray-600 border-gray-200";
                     }
                   };
                   
@@ -108,8 +145,8 @@ export default function Sidebar({ userRole = "claims_agent", onRoleChange }: Sid
                       <div className="flex flex-col items-start w-full min-w-0">
                         <div className="flex items-center justify-between w-full gap-2">
                           <span className="font-medium text-xs truncate">{claim.claimNumber}</span>
-                          <Badge variant="outline" className={`text-xs h-4 px-1 flex-shrink-0 ${getPriorityColor(claim.priority)}`}>
-                            {claim.priority.charAt(0).toUpperCase() + claim.priority.slice(1)}
+                          <Badge variant="outline" className={`text-xs h-4 px-1 flex-shrink-0 ${getConfidenceColor(claim.aiConfidence || 'medium')}`}>
+                            {(claim.aiConfidence || 'medium').charAt(0).toUpperCase() + (claim.aiConfidence || 'medium').slice(1)} AI
                           </Badge>
                         </div>
                         <div className="text-xs text-muted-foreground truncate w-full">
@@ -123,9 +160,24 @@ export default function Sidebar({ userRole = "claims_agent", onRoleChange }: Sid
                   );
                 })}
               </div>
+              {userRole === "claims_agent" && highConfidenceClaims.length > 0 && (
+                <div className="mt-3 ml-8">
+                  <Button
+                    onClick={handleBatchApprove}
+                    disabled={batchApproveMutation.isPending}
+                    size="sm"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white text-xs disabled:opacity-50"
+                  >
+                    <Zap className="w-3 h-3 mr-1" />
+                    {batchApproveMutation.isPending
+                      ? `Approving ${highConfidenceClaims.length}...`
+                      : `Batch Approve ${highConfidenceClaims.length} High Confidence`}
+                  </Button>
+                </div>
+              )}
             </AccordionContent>
           </AccordionItem>
-          
+
           <AccordionItem value="approved-claims" className="border-0">
             <AccordionTrigger 
               className="p-3 hover:no-underline text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md flex items-center justify-between w-full"
