@@ -1,4 +1,4 @@
-import { Car, ClipboardList, CheckCircle2, Clock, BarChart3, User, Settings, ChevronDown, ChevronRight, Zap } from "lucide-react";
+import { Car, ClipboardList, CheckCircle2, Clock, BarChart3, User, Settings, ChevronDown, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -146,7 +146,7 @@ export default function Sidebar({ userRole = "claims_agent", onRoleChange }: Sid
                         <div className="flex items-center justify-between w-full gap-2">
                           <span className="font-medium text-xs truncate">{claim.claimNumber}</span>
                           <Badge variant="outline" className={`text-xs h-4 px-1 flex-shrink-0 ${getConfidenceColor(claim.aiConfidence || 'medium')}`}>
-                            {(claim.aiConfidence || 'medium').charAt(0).toUpperCase() + (claim.aiConfidence || 'medium').slice(1)} AI
+                            {(claim.aiConfidence || 'medium').charAt(0).toUpperCase() + (claim.aiConfidence || 'medium').slice(1)}
                           </Badge>
                         </div>
                         <div className="text-xs text-muted-foreground truncate w-full">
@@ -168,10 +168,9 @@ export default function Sidebar({ userRole = "claims_agent", onRoleChange }: Sid
                     size="sm"
                     className="w-full bg-green-600 hover:bg-green-700 text-white text-xs disabled:opacity-50"
                   >
-                    <Zap className="w-3 h-3 mr-1" />
                     {batchApproveMutation.isPending
                       ? `Approving ${highConfidenceClaims.length}...`
-                      : `Batch Approve ${highConfidenceClaims.length} High Confidence`}
+                      : `Approve ${highConfidenceClaims.length} High Confidence`}
                   </Button>
                 </div>
               )}
